@@ -105,7 +105,7 @@ func copyContent(from net.Conn, to net.Conn, complete chan bool, done chan bool,
             // If we received a done message from the other goroutine, we exit.
             case <- otherDone:
                 complete <- true
-                break
+                return
             default:
                 // Read data from the source connection.
                 read, err = from.Read(bytes)
@@ -114,7 +114,7 @@ func copyContent(from net.Conn, to net.Conn, complete chan bool, done chan bool,
                 if err != nil {
                     complete <- true
                     done <- true
-                    break
+                    return
                 }
                 // Write data to the destination.
                 _, err = to.Write(bytes[:read])
@@ -122,7 +122,7 @@ func copyContent(from net.Conn, to net.Conn, complete chan bool, done chan bool,
                 if err != nil {
                     complete <- true
                     done <- true
-                    break
+                    return
                 }
         }
     }
