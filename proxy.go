@@ -34,7 +34,7 @@ func main() {
     // The booleans representing the free active connection spaces.
     spaces := make(chan bool, *maxConnections)
     // Initialize the spaces
-    for i = 0; i < maxConnections; i++ {
+    for i := 0; i < *maxConnections; i++ {
         spaces <- true
     }
 
@@ -84,9 +84,8 @@ func handleConnection(connection net.Conn) {
         return
     }
     defer remote.Close()
-}
-
-// Create our channel which waits for completion, and start both copying
+	
+	// Create our channel which waits for completion, and start both copying
     // goroutines.
     complete := make(chan bool)
     go copyContent(connection, remote, complete)
