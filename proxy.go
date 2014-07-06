@@ -5,6 +5,7 @@ import (
     "fmt"
     "log"
     "net"
+    "time"
 )
 
 var fromHost = flag.String("from", "localhost:80", "The proxy server's host.")
@@ -107,7 +108,9 @@ func copyContent(from net.Conn, to net.Conn, complete chan bool, done chan bool,
                 complete <- true
                 return
             default:
+
                 // Read data from the source connection.
+                from.SetReadDeadline(time.Now().Add(time.Second * 5))
                 read, err = from.Read(bytes)
                 // If any errors occured, write to complete as we are done (one of the
                 // connections closed.)
@@ -117,6 +120,7 @@ func copyContent(from net.Conn, to net.Conn, complete chan bool, done chan bool,
                     return
                 }
                 // Write data to the destination.
+                to.SetWriteDeadline(time.Now().Add(time.Second * 5))
                 _, err = to.Write(bytes[:read])
                 // Same error checking.
                 if err != nil {
